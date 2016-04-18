@@ -1,0 +1,52 @@
+{
+  "name": "recipes-server",
+  "version": "0.0.1",
+  "description": "Node server to handle data and auth of recipe book application",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node index.js",
+    "test": "mocha --compilers js:babel-core/register --recursive",
+    "test:watch": "npm run test -- --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Timonium/recipes-server.git"
+  },
+  "author": {
+    "name": "Tim Geurts",
+    "email": "",
+    "url": ""
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Timonium/recipes-server/issues"
+  },
+  "homepage": "https://github.com/Timonium/recipes-server",
+  "babel": {
+    "presets": ["es2015"]
+  },
+  "dependencies": {
+    "bcryptjs": "^0.7.12",
+    "express": "^4.9.5",
+    "express-handlebars": "^1.1.0",
+    "morgan": "^1.3.2",
+    "body-parser": "^1.9.0",
+    "cookie-parser": "^1.3.3",
+    "method-override": "^2.2.0",
+    "express-session": "^1.8.2",
+    "orchestrate": "^0.3.11",
+    "passport": "^0.2.1",
+    "passport-facebook": "^1.0.3",
+    "passport-google": "^0.3.0",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.2",
+    "q": "^1.0.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.7.5",
+    "babel-core": "^6.7.6",
+    "babel-preset-es2015": "^6.6.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.4.5"
+  }
+}
