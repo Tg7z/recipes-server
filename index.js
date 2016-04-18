@@ -1,6 +1,5 @@
-//index.js/
+'use strict';
 import express from 'express';
-import exphbs from 'express-handlebars';
 import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
@@ -46,19 +45,22 @@ app.use(function(req, res, next){
   next();
 });
 
-// Configure express to use handlebars templates
-const hbs = exphbs.create({
-  defaultLayout: 'main',
-});
-
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+// configure app to use bodyParser()
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 //===============ROUTES===============
+const router = express.Router();
 
-//This section will hold our Routes
+router.get('/', function(req, res) {
+  res.json({ message: 'It works!' });
+});
+
+// REGISTER OUR ROUTES
+// all of our routes will be prefixed with /api/${version}
+app.use('/api/v1', router);
 
 //===============PORT=================
-var port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000;
 app.listen(port);
 console.log("listening on " + port + "!");
