@@ -13,6 +13,7 @@ import GoogleStrategy from 'passport-google';
 import FacebookStrategy from 'passport-facebook';
 
 // Controllers
+import * as authController from './src/controllers/auth';
 import * as recipeController from './src/controllers/recipe';
 import * as userController from './src/controllers/user';
 
@@ -68,18 +69,18 @@ const router = express.Router();
 // Create endpoint handlers for /recipes
 router.route('/recipes')
   .get(recipeController.getRecipes)
-  .post(recipeController.postRecipes);
+  .post(authController.isAuthenticated, recipeController.postRecipes);
 
 // Create endpoint handlers for /recipes/:recipe_id
 router.route('/recipes/:recipe_id')
   .get(recipeController.getRecipe)
-  .put(recipeController.putRecipe)
-  .delete(recipeController.deleteRecipe);
+  .put(authController.isAuthenticated, recipeController.putRecipe)
+  .delete(authController.isAuthenticated, recipeController.deleteRecipe);
 
 // Create endpoint handlers for /users
 router.route('/users')
   .post(userController.postUsers)
-  .get(userController.getUsers);
+  .get(authController.isAuthenticated, userController.getUsers);
 
 
 // REGISTER OUR ROUTES
