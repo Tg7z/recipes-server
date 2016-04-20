@@ -14,6 +14,7 @@ import FacebookStrategy from 'passport-facebook';
 
 // Controllers
 import * as recipeController from './src/controllers/recipe';
+import * as userController from './src/controllers/user';
 
 // Connect to the MongoDB
 mongoose.connect('mongodb://localhost:27017/recipe-book');
