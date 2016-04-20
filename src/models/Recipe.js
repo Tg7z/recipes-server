@@ -13,8 +13,11 @@ const RecipeSchema = new mongoose.Schema({
 
   faves: Number,
   isPublished: { type: Boolean, default: false },
-  created: { type: Date, default: Date.now },
-  updated: { type: Date, default: Date.now },
+}, {
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  }
 });
 
 module.exports = mongoose.model('Recipe', RecipeSchema);

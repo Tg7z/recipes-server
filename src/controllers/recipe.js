@@ -44,34 +44,36 @@ exports.getRecipe = function(req, res) {
 // Create endpoint /api/v1/recipes/:recipe_id for PUT
 exports.putRecipe = function(req, res) {
   const d = req.body;
+  const recipe = {};
 
-  Recipe.findById(req.params.recipe_id, function(err, recipe) {
-    if (err) res.send(err);
-
-    // Update the recipe properties that came from the PUT data
+  // Update the recipe properties that came from the PUT data
     if (d.title) recipe.title = d.title;
     if (d.imageurl) recipe.imageurl = d.imageurl;
     if (d.faves) recipe.faves = d.faves;
     if (d.method) recipe.method = d.method;
     if (d.ingredients) recipe.ingredients = d.ingredients;
+    if (d.isPublished) recipe.isPublished = d.isPublished;
 
-    // meta
-    recipe.updated = d.updated;
-    d.isPublished = new Date();
+  Recipe.update({ authorId: req.user._id, _id: req.params.recipe_id }, recipe, function(err, num, raw) {
+    if (err) res.send(err);
 
-    recipe.save(function(err) {
-      if (err) res.send(err);
-
-      res.json(recipe);
+    res.json({
+      success: true,
+      message: 'recipe updated',
+      num,
     });
   });
 };
 
 // Create endpoint /api/v1/recipes/:recipe_id for DELETE
 exports.deleteRecipe = function(req, res) {
-  Recipe.findByIdAndRemove(req.params.recipe_id, function(err) {
+  Recipe.remove({ authorId: req.user._id, _id: req.params.recipe_id }, function(err, num, raw) {
     if (err) res.send(err);
 
-    res.json({ message: 'Recipe deleted' });
+    res.json({
+      success: true,
+      message: 'recipe deleted',
+      num,
+    });
   });
 };
