@@ -17,13 +17,13 @@ exports.postRecipes = function(req, res) {
 
   // Set the recipe properties that came from the POST data
   recipe.title = d.title;
-  recipe.author = d.author;
   recipe.imageurl = d.imageurl;
   recipe.faves = d.faves;
   recipe.method = d.method;
   recipe.ingredients = d.ingredients;
   recipe.updated = d.updated;
   recipe.isPublished = d.isPublished;
+  recipe.authorId = req.user._id;
 
   recipe.save(function(err) {
     if (err) res.send(err);
@@ -50,13 +50,14 @@ exports.putRecipe = function(req, res) {
 
     // Update the recipe properties that came from the PUT data
     if (d.title) recipe.title = d.title;
-    if (d.author) recipe.author = d.author;
     if (d.imageurl) recipe.imageurl = d.imageurl;
     if (d.faves) recipe.faves = d.faves;
     if (d.method) recipe.method = d.method;
     if (d.ingredients) recipe.ingredients = d.ingredients;
-    if (d.updated) recipe.updated = d.updated;
-    if (d.isPublished) recipe.isPublished = d.isPublished;
+
+    // meta
+    recipe.updated = d.updated;
+    d.isPublished = new Date();
 
     recipe.save(function(err) {
       if (err) res.send(err);

@@ -1,10 +1,9 @@
 'use strict';
 import mongoose from 'mongoose';
 
-const ObjectId = mongoose.Schema.Types.ObjectId;
 const RecipeSchema = new mongoose.Schema({
   title: String,
-  author: ObjectId,
+  authorId: String,
   imageurl: String,
   method: String,
   ingredients: [{
