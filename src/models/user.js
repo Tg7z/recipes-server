@@ -1,5 +1,6 @@
 'use strict';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt-nodejs';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -13,7 +14,7 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.pre('save', (callback) => {
+UserSchema.pre('save', function(callback) {
   const user = this;
 
   // Break out if the password hasn't changed
@@ -25,12 +26,11 @@ UserSchema.pre('save', (callback) => {
 
     bcrypt.hash(user.password, salt, null, function(err, hash) {
       if (err) return callback(err);
+
       user.password = hash;
       callback();
     });
   });
 });
-
-
 
 module.exports = mongoose.model('User', UserSchema);

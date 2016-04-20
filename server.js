@@ -76,6 +76,11 @@ router.route('/recipes/:recipe_id')
   .put(recipeController.putRecipe)
   .delete(recipeController.deleteRecipe);
 
+// Create endpoint handlers for /users
+router.route('/users')
+  .post(userController.postUsers)
+  .get(userController.getUsers);
+
 
 // REGISTER OUR ROUTES
 // all of our routes will be prefixed with /api/${version}

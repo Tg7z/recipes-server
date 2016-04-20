@@ -1,5 +1,5 @@
 'use strict';
-import Recipe from '../models/user';
+import User from '../models/user';
 
 // Create endpoint /api/v1/users for POST
 exports.postUsers = function(req, res) {
