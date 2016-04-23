@@ -7,15 +7,15 @@ import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import session from 'express-session';
 import passport from 'passport';
-import LocalStrategy from 'passport-local';
-import TwitterStrategy from 'passport-twitter';
-import GoogleStrategy from 'passport-google';
-import FacebookStrategy from 'passport-facebook';
+import { default as passportConfig } from './src/config/passport';
 
 // Controllers
 import * as authController from './src/controllers/auth';
 import * as recipeController from './src/controllers/recipe';
 import * as userController from './src/controllers/user';
+
+// Helpers
+import authHelpers from './src/helpers/auth';
 
 // Connect to the MongoDB
 mongoose.connect('mongodb://localhost:27017/recipe-book');
@@ -26,8 +26,7 @@ const app = express();
 
 
 //===============PASSPORT===============
-
-//This section will contain our work with Passport
+passportConfig(passport);
 
 
 
@@ -64,28 +63,32 @@ app.use(function(req, res, next){
 
 
 //===============ROUTES===============
-const router = express.Router();
+const apiRouter = express.Router();
 
-// Create endpoint handlers for /recipes
-router.route('/recipes')
-  .get(recipeController.getRecipes)
-  .post(authController.isAuthenticated, recipeController.postRecipes);
-
-// Create endpoint handlers for /recipes/:recipe_id
-router.route('/recipes/:recipe_id')
-  .get(recipeController.getRecipe)
-  .put(authController.isAuthenticated, recipeController.putRecipe)
-  .delete(authController.isAuthenticated, recipeController.deleteRecipe);
+// Create endpoint handlers for /authenticate
+apiRouter.route('/authenticate')
+  .post(authController.authenticate);
 
 // Create endpoint handlers for /users
-router.route('/users')
+apiRouter.route('/users')
   .post(userController.postUsers)
-  .get(authController.isAuthenticated, userController.getUsers);
+  .get(authHelpers.requireAuth(), userController.getUsers);
+
+// Create endpoint handlers for /recipes
+apiRouter.route('/recipes')
+  .get(recipeController.getRecipes)
+  .post(authHelpers.requireAuth(), recipeController.postRecipes);
+
+// Create endpoint handlers for /recipes/:recipe_id
+apiRouter.route('/recipes/:recipe_id')
+  .get(recipeController.getRecipe)
+  .put(recipeController.putRecipe)
+  .delete(recipeController.deleteRecipe);
 
 
 // REGISTER OUR ROUTES
 // all of our routes will be prefixed with /api/${version}
-app.use('/api/v1', router);
+app.use('/api/v1', apiRouter);
 
 
 

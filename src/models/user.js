@@ -1,6 +1,6 @@
 'use strict';
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -17,20 +17,22 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', function(callback) {
   const user = this;
 
-  // Break out if the password hasn't changed
-  if (!user.isModified('password')) return callback();
+  if (this.isModified('password') || this.isNew) {
+    bcrypt.genSalt(10, function (err, salt) {
 
-  // Password changed so we need to hash it
-  bcrypt.genSalt(5, (err, salt) => {
-    if (err) return callback(err);
-
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
       if (err) return callback(err);
 
-      user.password = hash;
-      callback();
+      bcrypt.hash(user.password, salt, function (err, hash) {
+          if (err) return callback(err);
+
+          user.password = hash;
+          callback();
+      });
     });
-  });
+  } else {
+    return callback();
+  }
+
 });
 
 UserSchema.methods.verifyPassword = function(password, cb) {
