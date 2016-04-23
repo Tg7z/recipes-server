@@ -23,6 +23,9 @@ module.exports = function(app) {
   apiRouter.route('/users')
     .get(authHelpers.requireAuth(), userController.getUsers);
 
+  apiRouter.route('/users/me')
+    .get(authHelpers.requireAuth(), userController.getSelf);
+
   // Create endpoint handlers for /users/:user
   apiRouter.route('/users/:user_id')
     .get(authHelpers.requireAuth(), userController.getUser);;

@@ -1,26 +1,6 @@
 'use strict';
 import User from '../models/user';
-import { getToken } from './auth'
-
-// Create endpoint /api/v1/users for POST
-exports.postUsers = function(req, res) {
-
-  // validate request
-  if (!req.body.username || !req.body.password) {
-    res.json({success: false, msg: 'Please pass name and password.'});
-  }
-
-  var user = new User({
-    username: req.body.username,
-    password: req.body.password
-  });
-
-  user.save(function(err) {
-    if (err) res.send({ success: false, err: err });
-
-    res.json({ success: true, msg: 'New user created' });
-  });
-};
+import { getUserId, isOwner } from './auth';
 
 // Create endpoint /api/v1/users for GET
 exports.getUsers = function(req, res) {
@@ -30,3 +10,27 @@ exports.getUsers = function(req, res) {
     res.json(users);
   });
 };
+
+// Create endpoint /api/v1/users/me for GET
+exports.getSelf = function(req, res) {
+  const user_id = getUserId(req.headers);
+
+  User.findById(user_id, function(err, user) {
+    if (err) res.send(err);
+
+    res.json(user);
+  });
+};
+
+// Create endpoint /api/v1/users/:user_id for GET
+exports.getUser = function(req, res) {
+  const query_id = req.params.user_id;
+
+  User.findById(query_id, function(err, user) {
+    if (err) res.send(err);
+
+    res.json(user);
+  });
+};
+
+
