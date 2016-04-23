@@ -1,5 +1,8 @@
 'use strict';
 import Recipe from '../models/recipe';
+import { getUserId, isOwner } from './auth';
+
+const ownsRecipe = (user_id, recipe_id) => ({ authorId: user_id, _id: recipe_id });
 
 // Create endpoint /api/v1/recipes for GET
 exports.getRecipes = function(req, res) {
@@ -43,19 +46,23 @@ exports.getRecipe = function(req, res) {
 
 // Create endpoint /api/v1/recipes/:recipe_id for PUT
 exports.putRecipe = function(req, res) {
-  const d = req.body;
+  const { headers, params, body: d } = req;
+  const recipe_id = params.recipe_id;
+  const user_id = getUserId(headers);
   const recipe = {};
 
   // Update the recipe properties that came from the PUT data
-    if (d.title) recipe.title = d.title;
-    if (d.imageurl) recipe.imageurl = d.imageurl;
-    if (d.faves) recipe.faves = d.faves;
-    if (d.method) recipe.method = d.method;
-    if (d.ingredients) recipe.ingredients = d.ingredients;
-    if (d.isPublished) recipe.isPublished = d.isPublished;
+  if (d.title) recipe.title = d.title;
+  if (d.imageurl) recipe.imageurl = d.imageurl;
+  if (d.faves) recipe.faves = d.faves;
+  if (d.method) recipe.method = d.method;
+  if (d.ingredients) recipe.ingredients = d.ingredients;
+  if (d.isPublished) recipe.isPublished = d.isPublished;
 
-  Recipe.update({ authorId: req.user._id, _id: req.params.recipe_id }, recipe, function(err, num, raw) {
+  Recipe.update(ownsRecipe(user_id, recipe_id), recipe, function(err, num, raw) {
     if (err) res.send(err);
+
+    console.log(err, num, raw);
 
     res.json({
       success: true,
@@ -67,7 +74,11 @@ exports.putRecipe = function(req, res) {
 
 // Create endpoint /api/v1/recipes/:recipe_id for DELETE
 exports.deleteRecipe = function(req, res) {
-  Recipe.remove({ authorId: req.user._id, _id: req.params.recipe_id }, function(err, num, raw) {
+  const { headers, params } = req;
+  const recipe_id = params.recipe_id;
+  const user_id = getUserId(headers);
+
+  Recipe.remove(ownsRecipe(user_id, recipe_id), function(err, num, raw) {
     if (err) res.send(err);
 
     res.json({
