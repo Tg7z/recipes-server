@@ -50,6 +50,10 @@ exports.putRecipe = function(req, res) {
   const recipe_id = params.recipe_id;
   const user_id = getUserId(headers);
   const recipe = {};
+  const isOwner = ownsRecipe(user_id, recipe_id);
+
+  console.log(d);
+  console.log(isOwner);
 
   // Update the recipe properties that came from the PUT data
   if (d.title) recipe.title = d.title;
@@ -59,16 +63,21 @@ exports.putRecipe = function(req, res) {
   if (d.ingredients) recipe.ingredients = d.ingredients;
   if (d.isPublished) recipe.isPublished = d.isPublished;
 
-  Recipe.update(ownsRecipe(user_id, recipe_id), recipe, function(err, num, raw) {
+  Recipe.update(isOwner, recipe, function(err, num, raw) {
     if (err) res.send(err);
 
-    console.log(err, num, raw);
-
-    res.json({
-      success: true,
-      message: 'recipe updated',
-      num,
-    });
+    if (num.n) {
+      res.json({
+        success: true,
+        message: 'recipe updated',
+        num,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: 'you don\'t own this recipe',
+      });
+    }
   });
 };
 
@@ -81,10 +90,16 @@ exports.deleteRecipe = function(req, res) {
   Recipe.remove(ownsRecipe(user_id, recipe_id), function(err, num, raw) {
     if (err) res.send(err);
 
-    res.json({
-      success: true,
-      message: 'recipe deleted',
-      num,
-    });
+    if (num.result.n) {
+      res.json({
+        success: true,
+        message: 'recipe deleted',
+      });
+    } else {
+      res.json({
+        success: false,
+        message: 'you don\'t own this recipe',
+      });
+    }
   });
 };
