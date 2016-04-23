@@ -3,8 +3,11 @@ import JWT from 'passport-jwt';
 import User from '../models/user';
 import config from '../config/database';
 
-module.exports = function(passport) {
-  const AUTH_HEADER = 'jwt_token';
+const AUTH_HEADER = 'jwt_token';
+
+exports.AUTH_HEADER = AUTH_HEADER;
+
+exports.config = function(passport) {
   const opts = {};
 
   opts.secretOrKey = config.secret;

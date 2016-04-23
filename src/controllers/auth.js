@@ -2,30 +2,20 @@
 import * as jwt from 'jwt-simple'
 import User from '../models/user';
 import { default as config } from '../config/database';
+import { AUTH_HEADER } from '../config/passport';
 
-// passport.use(new BasicStrategy( function(username, password, callback) {
-//   User.findOne({ username: username }, function (err, user) {
-//     if (err) { return callback(err); }
+const getToken = (headers) => {
+  if (headers && headers[ AUTH_HEADER ]) {
+    return headers[ AUTH_HEADER ];
+  } else {
+    return null;
+  }
+};
 
-//     // No user found with that username
-//     if (!user) { return callback(null, false); }
+const decodeToken = (token) => jwt.decode(token, config.secret);
 
-//     // Make sure the password is correct
-//     user.verifyPassword(password, function(err, isMatch) {
-//       if (err) { return callback(err); }
-
-//       // Password did not match
-//       if (!isMatch) { return callback(null, false); }
-
-//       // Success
-//       return callback(null, user);
-//     });
-//   });
-// }));
-
-// exports.isAuthenticated = passport.authenticate('basic', { session : false });
-
-exports.authenticate = function(req, res) {
+// Create endpoint /api/v1/authenticate for POST
+exports.authenticate = (req, res) => {
   User.findOne({
     username: req.body.username
   }, function(err, user) {
@@ -49,17 +39,38 @@ exports.authenticate = function(req, res) {
   });
 };
 
+// Create endpoint /api/v1/signup for POST
+exports.signup = function(req, res) {
+  const { username, password } = req.body;
 
-exports.getToken = (headers) => {
-  if (headers && headers.authorization) {
-    const parted = headers.authorization.split(' ');
-
-    if (parted.length === 2) {
-      return parted[1];
-    } else {
-      return null;
-    }
-  } else {
-    return null;
+  // validate request
+  if (!username || !password) {
+    res.json({success: false, msg: 'Please pass name and password.'});
   }
+
+  const user = new User({
+    username,
+    password,
+  });
+
+  user.save(function(err) {
+    if (err) res.send({ success: false, err: err });
+
+    res.json({ success: true, msg: 'New user created' });
+  });
+};
+
+exports.isOwner = (item_id, headers) => {
+  const user_id = getUserId(headers);
+
+  if (item_id === user_id) return true;
+
+  return false;
+};
+
+exports.getUserId = (headers) => {
+  const token = getToken(headers);
+  const decoded = decodeToken(token);
+
+  return decoded._id;
 };

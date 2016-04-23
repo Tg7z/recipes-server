@@ -9,7 +9,7 @@ import session from 'express-session';
 import passport from 'passport';
 
 // App config
-import passportConfig from './src/config/passport';
+import { config as passportConfig } from './src/config/passport';
 import routeConfig from './src/config/routes';
 
 // Connect to the MongoDB

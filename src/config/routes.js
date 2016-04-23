@@ -16,10 +16,16 @@ module.exports = function(app) {
   apiRouter.route('/authenticate')
     .post(authController.authenticate);
 
+  apiRouter.route('/signup')
+    .post(authController.signup)
+
   // Create endpoint handlers for /users
   apiRouter.route('/users')
-    .post(userController.postUsers)
     .get(authHelpers.requireAuth(), userController.getUsers);
+
+  // Create endpoint handlers for /users/:user
+  apiRouter.route('/users/:user_id')
+    .get(authHelpers.requireAuth(), userController.getUser);;
 
   // Create endpoint handlers for /recipes
   apiRouter.route('/recipes')
@@ -29,8 +35,8 @@ module.exports = function(app) {
   // Create endpoint handlers for /recipes/:recipe_id
   apiRouter.route('/recipes/:recipe_id')
     .get(recipeController.getRecipe)
-    .put(recipeController.putRecipe)
-    .delete(recipeController.deleteRecipe);
+    .put(authHelpers.requireAuth(), recipeController.putRecipe)
+    .delete(authHelpers.requireAuth(), recipeController.deleteRecipe);
 
 
   // REGISTER OUR ROUTES
