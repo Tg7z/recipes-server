@@ -15,18 +15,20 @@ exports.getRecipes = function(req, res) {
 
 // Create endpoint /api/v1/recipes for POST
 exports.postRecipes = function(req, res) {
-  const recipe = new Recipe();
+  const user_id = getUserId(req.headers);
   const d = req.body;
+  const recipe = new Recipe();
 
   // Set the recipe properties that came from the POST data
   recipe.title = d.title;
   recipe.imageurl = d.imageurl;
-  recipe.faves = d.faves;
   recipe.method = d.method;
   recipe.ingredients = d.ingredients;
-  recipe.updated = d.updated;
   recipe.isPublished = d.isPublished;
-  recipe.authorId = req.user._id;
+
+  recipe.faves = 0;
+  recipe.updated = new Date();
+  recipe.authorId = user_id;
 
   recipe.save(function(err) {
     if (err) res.send(err);
@@ -50,20 +52,16 @@ exports.putRecipe = function(req, res) {
   const recipe_id = params.recipe_id;
   const user_id = getUserId(headers);
   const recipe = {};
-  const isOwner = ownsRecipe(user_id, recipe_id);
-
-  console.log(d);
-  console.log(isOwner);
+  const conditions = ownsRecipe(user_id, recipe_id);
 
   // Update the recipe properties that came from the PUT data
   if (d.title) recipe.title = d.title;
   if (d.imageurl) recipe.imageurl = d.imageurl;
-  if (d.faves) recipe.faves = d.faves;
   if (d.method) recipe.method = d.method;
   if (d.ingredients) recipe.ingredients = d.ingredients;
   if (d.isPublished) recipe.isPublished = d.isPublished;
 
-  Recipe.update(isOwner, recipe, function(err, num, raw) {
+  Recipe.update(conditions, recipe, function(err, num, raw) {
     if (err) res.send(err);
 
     if (num.n) {
@@ -86,8 +84,9 @@ exports.deleteRecipe = function(req, res) {
   const { headers, params } = req;
   const recipe_id = params.recipe_id;
   const user_id = getUserId(headers);
+  const conditions = ownsRecipe(user_id, recipe_id);
 
-  Recipe.remove(ownsRecipe(user_id, recipe_id), function(err, num, raw) {
+  Recipe.remove(conditions, function(err, num, raw) {
     if (err) res.send(err);
 
     if (num.result.n) {
