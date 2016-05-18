@@ -16,8 +16,8 @@ module.exports = function(app) {
   apiRouter.route('/authenticate')
     .post(authController.authenticate);
 
-  apiRouter.route('/signup')
-    .post(authController.signup)
+  apiRouter.route('/register')
+    .post(authController.register)
 
   // Create endpoint handlers for /users
   apiRouter.route('/users')

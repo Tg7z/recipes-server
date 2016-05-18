@@ -30,7 +30,7 @@ exports.authenticate = (req, res) => {
           // if user is found and password is right create a token
           const token = jwt.encode(user, config.secret);
           // return the information including token as JSON
-          res.json({success: true, token: 'JWT ' + token});
+          res.json({success: true, token: token});
         } else {
           res.send({success: false, msg: 'Authentication failed. Wrong password.'});
         }
@@ -39,8 +39,8 @@ exports.authenticate = (req, res) => {
   });
 };
 
-// Create endpoint /api/v1/signup for POST
-exports.signup = function(req, res) {
+// Create endpoint /api/v1/register for POST
+exports.register = function(req, res) {
   const { username, password } = req.body;
 
   // validate request
