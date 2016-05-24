@@ -17,7 +17,7 @@ const decodeToken = (token) => jwt.decode(token, config.secret);
 // Create endpoint /api/v1/authenticate for POST
 exports.authenticate = (req, res) => {
   User.findOne({
-    username: req.body.username
+    email: req.body.email
   }, function(err, user) {
     if (err) throw err;
 
@@ -41,16 +41,18 @@ exports.authenticate = (req, res) => {
 
 // Create endpoint /api/v1/register for POST
 exports.register = function(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+  const roles = ['user'];
 
   // validate request
-  if (!username || !password) {
-    res.json({success: false, msg: 'Please pass name and password.'});
+  if (!email || !password) {
+    res.json({success: false, msg: 'Please pass email and password.'});
   }
 
-  const user = new User({
-    username,
+const user = new User({
+    email,
     password,
+    roles,
   });
 
   user.save(function(err) {
