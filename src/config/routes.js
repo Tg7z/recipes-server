@@ -23,12 +23,10 @@ module.exports = function(app) {
   apiRouter.route('/users')
     .get(authHelpers.requireAuth(), userController.getUsers);
 
-  apiRouter.route('/users/me')
-    .get(authHelpers.requireAuth(), userController.getSelf);
-
   // Create endpoint handlers for /users/:user
   apiRouter.route('/users/:user_id')
-    .get(authHelpers.requireAuth(), userController.getUser);;
+    .get(authHelpers.requireAuth(), userController.getUser);
+    .put(authHelpers.requireAuth(), userController.putUser);
 
   // Create endpoint handlers for /recipes
   apiRouter.route('/recipes')
