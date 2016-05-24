@@ -1,9 +1,9 @@
 'use strict';
 import JWT from 'passport-jwt';
-import UserAccount from '../models/user';
+import { UserAccount } from '../models/user';
 import config from '../config/database';
 
-const AUTH_HEADER = 'jwt_token';
+const AUTH_HEADER = 'jwt';
 
 exports.AUTH_HEADER = AUTH_HEADER;
 
