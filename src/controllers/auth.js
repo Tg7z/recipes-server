@@ -49,7 +49,7 @@ exports.register = function(req, res) {
     res.json({success: false, msg: 'Please pass email and password.'});
   }
 
-const user = new User({
+  const user = new User({
     email,
     password,
     roles,
