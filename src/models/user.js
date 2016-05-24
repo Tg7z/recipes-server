@@ -15,7 +15,24 @@ const UserSchema = new mongoose.Schema({
   roles: {
     type: Object,
     required: true,
-  }
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  firstname: String,
+  lastname: String,
+  avatar_url: String,
+  blurb: String,
+  recipe_ids: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Recipe',
+  }],
+  favourite_ids: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Recipe',
+  }],
 });
 
 UserSchema.pre('save', function(callback) {
