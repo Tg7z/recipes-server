@@ -1,5 +1,5 @@
 'use strict';
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const UserSchema = new mongoose.Schema({
@@ -16,23 +16,6 @@ const UserSchema = new mongoose.Schema({
     type: Object,
     required: true,
   },
-  username: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  firstname: String,
-  lastname: String,
-  avatar_url: String,
-  blurb: String,
-  recipe_ids: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Recipe',
-  }],
-  favourite_ids: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Recipe',
-  }],
 });
 
 UserSchema.pre('save', function(callback) {
@@ -64,4 +47,29 @@ UserSchema.methods.verifyPassword = function(password, cb) {
   });
 };
 
-module.exports = mongoose.model('User', UserSchema);
+const ProfileSchema = new mongoose.Schema({
+  user_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+  },
+  avatar_url: String,
+  firstname: String,
+  lastname: String,
+  blurb: String,
+  recipe_ids: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Recipe',
+  }],
+  favourite_ids: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Recipe',
+  }],
+});
+
+exports.UserProfile = mongoose.model('Profile', ProfileSchema);
+exports.UserAccount = mongoose.model('User', UserSchema);

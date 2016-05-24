@@ -17,7 +17,7 @@ module.exports = function(app) {
     .post(authController.authenticate);
 
   apiRouter.route('/register')
-    .post(authController.register)
+    .post(authController.register);
 
   // Create endpoint handlers for /users
   apiRouter.route('/users')
@@ -25,7 +25,7 @@ module.exports = function(app) {
 
   // Create endpoint handlers for /users/:user
   apiRouter.route('/users/:user_id')
-    .get(authHelpers.requireAuth(), userController.getUser);
+    .get(authHelpers.requireAuth(), userController.getUser)
     .put(authHelpers.requireAuth(), userController.putUser);
 
   // Create endpoint handlers for /recipes

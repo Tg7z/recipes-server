@@ -1,6 +1,6 @@
 'use strict';
 import JWT from 'passport-jwt';
-import User from '../models/user';
+import UserAccount from '../models/user';
 import config from '../config/database';
 
 const AUTH_HEADER = 'jwt_token';
@@ -14,7 +14,7 @@ exports.config = function(passport) {
   opts.jwtFromRequest = JWT.ExtractJwt.fromHeader(AUTH_HEADER);
 
   passport.use(new JWT.Strategy(opts, function(jwt_payload, callback) {
-    User.findOne({id: jwt_payload.id}, function(err, user) {
+    UserAccount.findOne({id: jwt_payload.id}, function(err, user) {
       if (err) return callback(err, false);
 
       if (user) {

@@ -1,6 +1,6 @@
 'use strict';
 import * as jwt from 'jwt-simple'
-import User from '../models/user';
+import { UserAccount } from '../models/user';
 import { default as config } from '../config/database';
 import { AUTH_HEADER } from '../config/passport';
 
@@ -16,7 +16,7 @@ const decodeToken = (token) => jwt.decode(token, config.secret);
 
 // Create endpoint /api/v1/authenticate for POST
 exports.authenticate = (req, res) => {
-  User.findOne({
+  UserAccount.findOne({
     email: req.body.email
   }, function(err, user) {
     if (err) throw err;
@@ -49,7 +49,7 @@ exports.register = function(req, res) {
     res.json({success: false, msg: 'Please pass email and password.'});
   }
 
-  const user = new User({
+  const user = new UserAccount({
     email,
     password,
     roles,
@@ -58,7 +58,8 @@ exports.register = function(req, res) {
   user.save(function(err) {
     if (err) res.send({ success: false, err: err });
 
-    res.json({ success: true, msg: 'New user created' });
+    const token = jwt.encode(user, config.secret);
+    res.json({ success: true, token: token });
   });
 };
 
