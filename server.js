@@ -9,13 +9,13 @@ import session from 'express-session';
 import passport from 'passport';
 
 // App config
-import { config as passportConfig } from './src/config/passport';
+import dbConfig from './src/config/database';
+import { config as passportConfig, AUTH_HEADER } from './src/config/passport';
 import routeConfig from './src/config/routes';
+import whitelist from './src/config/whitelist';
 
 // Connect to the MongoDB
-mongoose.connect('mongodb://localhost:27017/recipe-book');
-
-const app = express();
+mongoose.connect(dbConfig.database);
 
 
 
@@ -27,17 +27,18 @@ passportConfig(passport);
 
 
 //===============EXPRESS================
+const app = express();
+
 // Configure Express
 app.use(function(req, res, next) {
-  var allowedOrigins = ['http://127.0.0.1:8000', 'http://localhost:8000'];
-  var origin = req.headers.origin;
+  const origin = req.headers.origin;
 
-  if ( allowedOrigins.indexOf(origin) > -1 ) {
+  if ( whitelist.indexOf(origin) > -1 ) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
 
   // res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Headers', `Content-Type, ${AUTH_HEADER}`);
   res.header('Access-Control-Allow-Credentials', true);
 
   return next();
